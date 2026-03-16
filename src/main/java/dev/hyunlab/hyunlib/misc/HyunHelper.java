@@ -2,7 +2,12 @@ package dev.hyunlab.hyunlib.misc;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.management.ManagementFactory;
+import java.lang.management.OperatingSystemMXBean;
 import java.nio.charset.StandardCharsets;
+import java.nio.file.FileStore;
+import java.nio.file.FileSystem;
+import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.LocalDate;
@@ -10,6 +15,7 @@ import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -19,6 +25,10 @@ import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
+import dev.hyunlab.hyunlib.dto.CpuDto;
+import dev.hyunlab.hyunlib.dto.EmailDto;
+import dev.hyunlab.hyunlib.dto.FileStoreDto;
+import dev.hyunlab.hyunlib.dto.MemoryDto;
 import jakarta.mail.Authenticator;
 import jakarta.mail.Message;
 import jakarta.mail.MessagingException;
@@ -31,9 +41,98 @@ import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import jakarta.validation.constraints.NotNull;
-import dev.hyunlab.hyunlib.dto.EmailDto;
 
 public class HyunHelper {
+
+    // #region
+    public static MemoryDto getOsMemoryInfo() {
+        OperatingSystemMXBean baseOsBean = ManagementFactory.getOperatingSystemMXBean();
+        long totalMemory = -1L;
+        long freeMemory = -1L;
+        long usedMemory = -1L;
+        if (baseOsBean instanceof com.sun.management.OperatingSystemMXBean) {
+            com.sun.management.OperatingSystemMXBean osBean = (com.sun.management.OperatingSystemMXBean) baseOsBean;
+            totalMemory = osBean.getTotalMemorySize();
+            freeMemory = osBean.getFreeMemorySize();
+            usedMemory = totalMemory - freeMemory;
+        }
+        return MemoryDto
+                .builder()
+                .totalMemory(totalMemory)
+                .freeMemory(freeMemory)
+                .usedMemory(usedMemory)
+                .build();
+    }
+
+    public static Map<String, Object> getOsInfo() {
+        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+        return Map.of(
+                "name", osBean.getName(),
+                "arch", osBean.getArch(),
+                "version", osBean.getVersion(),
+                "availableProcessors", osBean.getAvailableProcessors());
+    }
+
+    public static CpuDto getCpuInfo() {
+        OperatingSystemMXBean osBean = ManagementFactory.getOperatingSystemMXBean();
+        return CpuDto
+                .builder()
+                .name(osBean.getName())
+                .arch(osBean.getArch())
+                .version(osBean.getVersion())
+                .availableProcessors(osBean.getAvailableProcessors())
+                .systemLoadAverage(osBean.getSystemLoadAverage())
+                .build();
+
+    }
+
+    public static Map<String, Object> getJvmInfo() {
+        Runtime runtime = Runtime.getRuntime();
+        return Map.of(
+                "name", System.getProperty("java.runtime.name"),
+                "version", System.getProperty("java.runtime.version"),
+                "vendor", System.getProperty("java.vendor"),
+                "availableProcessors", runtime.availableProcessors());
+    }
+
+    public static MemoryDto getJvmMemoryInfo() {
+        Runtime runtime = Runtime.getRuntime();
+        long totalMemory = runtime.totalMemory();
+        long freeMemory = runtime.freeMemory();
+        long usedMemory = totalMemory - freeMemory;
+
+        return MemoryDto
+                .builder()
+                .totalMemory(totalMemory)
+                .freeMemory(freeMemory)
+                .usedMemory(usedMemory)
+                .build();
+    }
+
+    public static List<FileStoreDto> getDiskInfo() {
+        List<FileStoreDto> fileStoreDtos = new java.util.ArrayList<>();
+
+        for (FileStore store : FileSystems.getDefault().getFileStores()) {
+            try {
+
+                FileStoreDto dto = FileStoreDto.builder()
+                        .name(store.name())
+                        .type(store.type())
+                        .totalSpace(store.getTotalSpace())
+                        .usedSpace(store.getTotalSpace() - store.getUsableSpace())
+                        .usableSpace(store.getUsableSpace())
+                        .build();
+
+                fileStoreDtos.add(dto);
+            } catch (IOException e) {
+                // 오류 처리 (예: 로그 기록)
+                e.printStackTrace();
+            }
+        }
+
+        return fileStoreDtos;
+    }
+    // #endregion
 
     public static String padLeft(String input, int length, char padChar) {
         if (input == null) {
