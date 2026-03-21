@@ -9,6 +9,7 @@ import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -16,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Supplier;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -174,7 +176,33 @@ public class HyunHelper {
      * @throws IOException
      * @since 20260203
      */
-    public static boolean sendEmail(EmailDto dto) throws MessagingException, IOException {
+    public static boolean sendEmail(@NotNull EmailDto dto) throws MessagingException, IOException {
+        // #region
+        Supplier<Boolean> validate = () -> {
+            if (dto.getSmtpDto() == null) {
+                return false;
+            }
+            if (isNullOrEmpty(dto.getSmtpDto().getHost()) || isNullOrEmpty(dto.getSmtpDto().getPort())) {
+                return false;
+            }
+            if (isNullOrEmpty(dto.getFromEmailAddress()) || isNullOrEmpty(dto.getFromEmailPassword())) {
+                return false;
+            }
+            if (isNullOrEmpty(dto.getToEmailAddresses())) {
+                return false;
+            }
+            if (isNullOrEmpty(dto.getTitle()) || isNullOrEmpty(dto.getBody())) {
+                return false;
+            }
+
+            return true;
+        };
+        // #endregion
+
+        if (!validate.get()) {
+            throw new IllegalArgumentException("Invalid EmailDto");
+        }
+
         // SMTP 서버 설정 (예: 회사 메일 서버)
         Properties props = new Properties();
         props.put("mail.smtp.host", dto.getSmtpDto().getHost());
@@ -279,6 +307,24 @@ public class HyunHelper {
     // #endregion
 
     // #region file/dir
+
+    public static Path createYmdPath() {
+        String ymd = getCurrentYmd();
+        return createYmdPath(ymd);
+    }
+
+    public static Path createYmdPath(String ymd) {
+        return Paths.get(ymd.substring(0, 4), ymd.substring(4, 6), ymd.substring(6, 8));
+    }
+
+    public static Path createYmPath() {
+        String ym = getCurrentYm();
+        return createYmPath(ym);
+    }
+
+    public static Path createYmPath(String ym) {
+        return Paths.get(ym.substring(0, 4), ym.substring(4, 6));
+    }
 
     /**
      * 파일 또는 디렉토리 삭제
