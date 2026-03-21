@@ -6,7 +6,6 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.FileStore;
-import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -303,6 +302,14 @@ public class HyunHelper {
         return System.getProperty("java.io.tmpdir");
     }
 
+    /**
+     * 파일 또는 디렉토리를 zip으로 압축
+     * 
+     * @param destPath     압축할 파일 또는 디렉토리 경로
+     * @param destFilePath 압축된 zip 파일이 생성될 경로 (파일명 포함)
+     * @return
+     * @throws IOException
+     */
     public static boolean compressPathToZip(Path destPath, Path destFilePath) throws IOException {
         try (ZipOutputStream zos = new ZipOutputStream(new java.io.FileOutputStream(destFilePath.toFile()))) {
             Files.walk(destPath)
