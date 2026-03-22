@@ -1,11 +1,13 @@
 package dev.hyunlab.hyunlib.misc;
 
-import lombok.Data;
+import java.util.List;
+
+import jakarta.annotation.Nullable;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
-import lombok.AllArgsConstructor;
-import java.util.List;
 
 @Data
 @Builder
@@ -13,18 +15,39 @@ import java.util.List;
 @AllArgsConstructor
 @ToString
 public class HyunResponse<T> {
-    private int code;
+    /** 정상일 때 널값, 오류시 값 존재 */
+    @Nullable
+    private Integer code;
+
+    /** 정상일 때 널값, 오류시 값 존재 */
+    @Nullable
     private String message;
+
+    @Nullable
     private T data;
+
+    @Nullable
     private List<T> datas;
 
     public static <T> HyunResponse<T> ok() {
         return HyunResponse.<T>builder()
-                .code(0)
-                .message("ok")
                 .build();
     }
 
+    @SuppressWarnings("unchecked")
+    public static <T> HyunResponse<T> ok(Object data) {
+        if (data instanceof List) {
+            return HyunResponse.<T>builder()
+                    .datas((List<T>) data)
+                    .build();
+        } else {
+            return HyunResponse.<T>builder()
+                    .data((T) data)
+                    .build();
+        }
+    }
+
+    @Deprecated(since = "20260321", forRemoval = true)
     public static <T> HyunResponse<T> data(T data) {
         return HyunResponse.<T>builder()
                 .code(0)
@@ -33,6 +56,7 @@ public class HyunResponse<T> {
                 .build();
     }
 
+    @Deprecated(since = "20260321", forRemoval = true)
     public static <T> HyunResponse<T> datas(List<T> datas) {
         return HyunResponse.<T>builder()
                 .code(0)
