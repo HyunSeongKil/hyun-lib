@@ -1,6 +1,7 @@
 package dev.hyunlab.hyunlib.misc;
 
 import java.util.List;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,4 +24,6 @@ public class HyunPaged<T> {
     private long total;
 
     private List<T> datas;
+
+    private Map<String, Object> extra;
 }
