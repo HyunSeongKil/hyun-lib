@@ -25,5 +25,5 @@ public class HyunPaged<T> {
 
     private List<T> datas;
 
-    private Map<String, Object> extra;
+    private Map<String, Object> data;
 }
