@@ -1,6 +1,8 @@
 package dev.hyunlab.hyunlib.misc;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -23,4 +25,16 @@ public class HyunPaged<T> {
     private long total;
 
     private List<T> data;
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        map.put("code", code);
+        map.put("message", message);
+        map.put("page", page);
+        map.put("size", size);
+        map.put("total", total);
+        map.put("data", data);
+
+        return map;
+    }
 }
