@@ -45,7 +45,15 @@ import jakarta.validation.constraints.NotNull;
 
 public class HyunHelper {
 
-    // #region
+    @SuppressWarnings("unchecked")
+    public static <T> T defaultValue(Object obj, T defaultVal) {
+        if (isNullOrEmpty(obj)) {
+            return defaultVal;
+        }
+        return (T) obj;
+    }
+
+    // #region os/cpu/memory/disk info
     public static MemoryDto getOsMemoryInfo() {
         OperatingSystemMXBean baseOsBean = ManagementFactory.getOperatingSystemMXBean();
         long totalMemory = -1L;
