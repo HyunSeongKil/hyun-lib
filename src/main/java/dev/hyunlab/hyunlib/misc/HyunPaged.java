@@ -26,7 +26,7 @@ public class HyunPaged<T> {
 
     private List<T> data;
 
-    public Map<String, Object> toMap() {
+    public Map<String, Object> toMutableMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("code", code);
         map.put("message", message);
