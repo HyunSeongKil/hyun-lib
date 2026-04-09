@@ -30,6 +30,9 @@ public class HyunResponse {
     @Nullable
     private Object data;
 
+    @Nullable
+    private Map<String, Object> extra;
+
     public static HyunResponse ok(Object obj) {
         return HyunResponse.builder()
                 .data(obj)

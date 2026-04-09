@@ -26,6 +26,8 @@ public class HyunPaged<T> {
 
     private List<T> data;
 
+    private Map<String, Object> extra;
+
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
         map.put("code", code);
@@ -34,6 +36,7 @@ public class HyunPaged<T> {
         map.put("size", size);
         map.put("total", total);
         map.put("data", data);
+        map.put("extra", extra);
 
         return map;
     }
