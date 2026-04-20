@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -28,6 +29,7 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 
 import dev.hyunlab.hyunlib.dto.CpuDto;
 import dev.hyunlab.hyunlib.dto.EmailDto;
+import dev.hyunlab.hyunlib.dto.EmailV2Dto;
 import dev.hyunlab.hyunlib.dto.FileStoreDto;
 import dev.hyunlab.hyunlib.dto.MemoryDto;
 import jakarta.mail.Authenticator;
@@ -176,6 +178,119 @@ public class HyunHelper {
     // #endregion
 
     // #region email
+
+    /**
+     * smpt를 이용한 메일발송
+     * 
+     * @author gravity@vaiv.kr
+     * @since 20260420
+     * @throws IOException
+     */
+    public static boolean sendEmail(@NotNull EmailV2Dto dto) throws MessagingException, IOException {
+        // #region
+        Supplier<Boolean> validate = () -> {
+            if (dto.getSmtpDto() == null) {
+                return false;
+            }
+            if (isNullOrEmpty(dto.getSmtpDto().getHost()) || isNullOrEmpty(dto.getSmtpDto().getPort())) {
+                return false;
+            }
+            if (isNullOrEmpty(dto.getAuthentication().getEmailAddress())
+                    || isNullOrEmpty(dto.getAuthentication().getPassword())) {
+                return false;
+            }
+            if (isNullOrEmpty(dto.getTos())) {
+                return false;
+            }
+            if (isNullOrEmpty(dto.getTitle()) || isNullOrEmpty(dto.getBody())) {
+                return false;
+            }
+
+            return true;
+        };
+
+        Supplier<Properties> smtpPropertiesSupplier = () -> {
+            Properties props = new Properties();
+            props.put("mail.smtp.host", dto.getSmtpDto().getHost());
+            props.put("mail.smtp.port", dto.getSmtpDto().getPort()); // 보통 25, 465(SSL), 587(TLS)
+            props.put("mail.smtp.auth", dto.getSmtpDto().isAuth() ? "true" : "false");
+            props.put("mail.smtp.starttls.enable", dto.getSmtpDto().isStarttlsEnable() ? "true" : "false"); // TLS 사용 시
+            return props;
+        };
+
+        Function<Properties, Session> sessionFunction = (props) -> Session.getInstance(props, new Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(dto.getAuthentication().getEmailAddress(),
+                        dto.getAuthentication().getPassword());
+            }
+        });
+
+        Function<Session, MimeMessage> messageFunction = (session) -> {
+            try {
+                MimeMessage message = new MimeMessage(session);
+                message.setFrom(new InternetAddress(dto.getFrom().getEmailAddress()));
+
+                var toEmailAddresses = dto.getTos()
+                        .stream()
+                        .map(EmailV2Dto.EmailUser::getEmailAddress)
+                        .toList();
+                message.setRecipients(Message.RecipientType.TO,
+                        InternetAddress.parse(String.join(",", toEmailAddresses)));
+                return message;
+            } catch (MessagingException e) {
+                throw new RuntimeException("Error while creating email message", e);
+            }
+        };
+
+        Supplier<Multipart> multipartSupplier = () -> {
+            try {
+                // 본문 파트
+                MimeBodyPart textPart = new MimeBodyPart();
+                textPart.setText(dto.getBody(), StandardCharsets.UTF_8.name());
+
+                // Multipart에 본문과 첨부파일 추가
+                Multipart multipart = new MimeMultipart();
+                multipart.addBodyPart(textPart);
+
+                // 첨부파일 파트
+                if (dto.getAttachments() != null) {
+                    for (EmailV2Dto.Attachment attachment : dto.getAttachments()) {
+                        MimeBodyPart attachmentPart = new MimeBodyPart();
+                        attachmentPart.attachFile(attachment.getPath().toFile());
+                        attachmentPart.setFileName(attachment.getFileName());
+                        multipart.addBodyPart(attachmentPart);
+                    }
+                }
+
+                return multipart;
+            } catch (IOException | MessagingException e) {
+                throw new RuntimeException("Error while creating email multipart content", e);
+            }
+        };
+
+        // #endregion
+
+        if (!validate.get()) {
+            throw new IllegalArgumentException("Invalid EmailDto");
+        }
+
+        // SMTP 서버 설정 (예: 회사 메일 서버)
+        Properties props = smtpPropertiesSupplier.get();
+
+        // 인증 세션 생성
+        Session session = sessionFunction.apply(props);
+
+        // 메일 메시지 작성
+        MimeMessage message = messageFunction.apply(session);
+        message.setSubject(dto.getTitle());
+        // 메시지에 Multipart 설정
+        message.setContent(multipartSupplier.get());
+
+        // 메일 전송
+        Transport.send(message);
+
+        return true;
+    }
 
     /**
      * smpt를 이용한 메일발송
