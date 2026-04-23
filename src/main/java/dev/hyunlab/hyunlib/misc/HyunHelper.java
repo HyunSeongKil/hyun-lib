@@ -255,7 +255,7 @@ public class HyunHelper {
             try {
                 // 본문 파트
                 MimeBodyPart textPart = new MimeBodyPart();
-                textPart.setText(dto.getBody(), StandardCharsets.UTF_8.name());
+                textPart.setContent(dto.getBody(), "text/html; charset=UTF-8");
 
                 // Multipart에 본문과 첨부파일 추가
                 Multipart multipart = new MimeMultipart();
@@ -350,6 +350,7 @@ public class HyunHelper {
 
         // 인증 세션 생성
         Session session = Session.getInstance(props, new Authenticator() {
+            @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(dto.getFromEmailAddress(), dto.getFromEmailPassword());
             }
@@ -364,14 +365,14 @@ public class HyunHelper {
 
         // 본문 파트
         MimeBodyPart textPart = new MimeBodyPart();
-        textPart.setText(dto.getBody(), StandardCharsets.UTF_8.name());
+        textPart.setContent(dto.getBody(), "text/html; charset=UTF-8");
 
         // Multipart에 본문과 첨부파일 추가
         Multipart multipart = new MimeMultipart();
         multipart.addBodyPart(textPart);
 
         // 첨부파일 파트
-        if (dto.getPaths() != null && dto.getPaths().size() > 0) {
+        if (dto.getPaths() != null && !dto.getPaths().isEmpty()) {
             for (int i = 0; i < dto.getPaths().size(); i++) {
                 MimeBodyPart attachmentPart = new MimeBodyPart();
                 attachmentPart.attachFile(dto.getPaths().get(i).toFile());
