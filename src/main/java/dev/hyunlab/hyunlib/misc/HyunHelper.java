@@ -293,7 +293,8 @@ public class HyunHelper {
     }
 
     /**
-     * smpt를 이용한 메일발송
+     * @deprecated HyunHelper.sendEmail(EmailDto) 대신 sendEmail(EmailV2Dto) 사용 권장
+     *             smpt를 이용한 메일발송
      * 
      * @author gravity@vaiv.kr
      * @throws IOException

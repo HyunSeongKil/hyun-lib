@@ -9,6 +9,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
+/**
+ * @deprecated HyunHelper.sendEmail(EmailDto) 대신 sendEmail(EmailV2Dto) 사용 권장
+ */
 @Data
 @Builder
 @NoArgsConstructor
