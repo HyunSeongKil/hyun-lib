@@ -32,6 +32,7 @@ public class EmailV2Dto {
   @Builder
   @NoArgsConstructor
   @AllArgsConstructor
+  @ToString
   /** 첨부파일 정보 */
   public static class Attachment {
     private Path path;
@@ -42,6 +43,7 @@ public class EmailV2Dto {
   @Builder
   @NoArgsConstructor
   @AllArgsConstructor
+  @ToString
   /** 메일 사용자(from/to) 정보 */
   public static class EmailUser {
     private String emailAddress;
@@ -54,6 +56,7 @@ public class EmailV2Dto {
   @Builder
   @NoArgsConstructor
   @AllArgsConstructor
+  @ToString
   /** 이메일 서버 로그인용 정보 */
   public static class Authentication {
     /** 이메일 주소 */

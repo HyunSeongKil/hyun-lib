@@ -44,8 +44,11 @@ import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import jakarta.validation.constraints.NotNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HyunHelper {
+    private static final Logger logger = LoggerFactory.getLogger(HyunHelper.class);
 
     @SuppressWarnings("unchecked")
     public static <T> T defaultValue(Object obj, T defaultVal) {
@@ -186,6 +189,7 @@ public class HyunHelper {
      * @since 20260420
      * @throws IOException
      */
+    @SuppressWarnings("UseSpecificCatch")
     public static boolean sendEmail(@NotNull EmailV2Dto dto) throws MessagingException, IOException {
         // #region
         Supplier<Boolean> validate = () -> {
@@ -286,8 +290,13 @@ public class HyunHelper {
         // 메시지에 Multipart 설정
         message.setContent(multipartSupplier.get());
 
-        // 메일 전송
-        Transport.send(message);
+        try {
+            // 메일 전송
+            Transport.send(message);
+        } catch (Exception e) {
+            logger.error("{}", dto);
+            throw e;
+        }
 
         return true;
     }
