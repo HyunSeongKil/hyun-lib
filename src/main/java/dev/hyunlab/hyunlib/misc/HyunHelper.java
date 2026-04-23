@@ -146,6 +146,21 @@ public class HyunHelper {
 
         return fileStoreDtos;
     }
+
+    /**
+     * 시스템 정보 로그 출력
+     * 
+     * @since 20260424
+     */
+    public static void logSystemInfo() {
+        logger.info("OS Info: {}", getOsInfo());
+        logger.info("CPU Info: {}", getCpuInfo());
+        logger.info("JVM Info: {}", getJvmInfo());
+        logger.info("OS Memory Info: {}", getOsMemoryInfo());
+        logger.info("JVM Memory Info: {}", getJvmMemoryInfo());
+        logger.info("Disk Info: {}", getDiskInfo());
+    }
+
     // #endregion
 
     public static String padLeft(String input, int length, char padChar) {
