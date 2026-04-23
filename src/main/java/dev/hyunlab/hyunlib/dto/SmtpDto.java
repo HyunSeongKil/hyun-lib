@@ -16,4 +16,5 @@ public class SmtpDto {
   private int port;
   private boolean auth;
   private boolean starttlsEnable;
+  private boolean sslEnable;
 }

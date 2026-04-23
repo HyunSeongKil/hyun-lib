@@ -218,7 +218,12 @@ public class HyunHelper {
             props.put("mail.smtp.host", dto.getSmtpDto().getHost());
             props.put("mail.smtp.port", dto.getSmtpDto().getPort()); // 보통 25, 465(SSL), 587(TLS)
             props.put("mail.smtp.auth", dto.getSmtpDto().isAuth() ? "true" : "false");
-            props.put("mail.smtp.starttls.enable", dto.getSmtpDto().isStarttlsEnable() ? "true" : "false"); // TLS 사용 시
+            if (dto.getSmtpDto().isStarttlsEnable()) {
+                props.put("mail.smtp.starttls.enable", "true"); // TLS 사용 시
+            }
+            if (dto.getSmtpDto().isSslEnable()) {
+                props.put("mail.smtp.ssl.enable", "true"); // SSL 사용 시
+            }
             return props;
         };
 
