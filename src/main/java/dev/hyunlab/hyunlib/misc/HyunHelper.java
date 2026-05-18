@@ -303,6 +303,7 @@ public class HyunHelper {
 
         // 인증 세션 생성
         Session session = sessionFunction.apply(props);
+        session.setDebug(true);
 
         // 메일 메시지 작성
         MimeMessage message = messageFunction.apply(session);
