@@ -235,6 +235,7 @@ public class HyunHelper {
             props.put("mail.smtp.auth", dto.getSmtpDto().isAuth() ? "true" : "false");
             if (dto.getSmtpDto().isStarttlsEnable()) {
                 props.put("mail.smtp.starttls.enable", "true"); // TLS 사용 시
+                props.put("mail.smtp.starttls.required", "true"); // TLS 필수 설정
             }
             if (dto.getSmtpDto().isSslEnable()) {
                 props.put("mail.smtp.ssl.enable", "true"); // SSL 사용 시
