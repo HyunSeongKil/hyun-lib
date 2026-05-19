@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -25,6 +24,8 @@ import java.util.zip.ZipOutputStream;
 import org.commonmark.node.Node;
 import org.commonmark.parser.Parser;
 import org.commonmark.renderer.html.HtmlRenderer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.mail.javamail.MimeMessageHelper;
 
 import dev.hyunlab.hyunlib.dto.CpuDto;
@@ -44,8 +45,6 @@ import jakarta.mail.internet.MimeBodyPart;
 import jakarta.mail.internet.MimeMessage;
 import jakarta.mail.internet.MimeMultipart;
 import jakarta.validation.constraints.NotNull;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class HyunHelper {
     private static final Logger logger = LoggerFactory.getLogger(HyunHelper.class);
@@ -162,6 +161,12 @@ public class HyunHelper {
     }
 
     // #endregion
+
+    public static String getStackTraceString(Exception ex) {
+        java.io.StringWriter sw = new java.io.StringWriter();
+        ex.printStackTrace(new java.io.PrintWriter(sw));
+        return sw.toString();
+    }
 
     public static String padLeft(String input, int length, char padChar) {
         if (input == null) {
