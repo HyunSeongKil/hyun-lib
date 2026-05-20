@@ -23,8 +23,8 @@ public class EmailV2Dto {
 
   private List<EmailUser> tos;
 
-  private String title;
-  private String body;
+  private String subject;
+  private String content;
 
   private List<Attachment> attachments;
 

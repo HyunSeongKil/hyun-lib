@@ -226,7 +226,7 @@ public class HyunHelper {
             if (isNullOrEmpty(dto.getTos())) {
                 return false;
             }
-            if (isNullOrEmpty(dto.getTitle()) || isNullOrEmpty(dto.getBody())) {
+            if (isNullOrEmpty(dto.getSubject()) || isNullOrEmpty(dto.getContent())) {
                 return false;
             }
 
@@ -276,7 +276,7 @@ public class HyunHelper {
             try {
                 // 본문 파트
                 MimeBodyPart textPart = new MimeBodyPart();
-                textPart.setContent(dto.getBody(), "text/html; charset=UTF-8");
+                textPart.setContent(dto.getContent(), "text/html; charset=UTF-8");
 
                 // Multipart에 본문과 첨부파일 추가
                 Multipart multipart = new MimeMultipart();
@@ -313,7 +313,7 @@ public class HyunHelper {
 
         // 메일 메시지 작성
         MimeMessage message = messageFunction.apply(session);
-        message.setSubject(dto.getTitle());
+        message.setSubject(dto.getSubject());
         // 메시지에 Multipart 설정
         message.setContent(multipartSupplier.get());
 
