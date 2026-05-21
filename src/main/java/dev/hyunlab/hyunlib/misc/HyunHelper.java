@@ -162,11 +162,31 @@ public class HyunHelper {
 
     // #endregion
 
+    // #region stack trace
     public static String getStackTraceString(Exception ex) {
         java.io.StringWriter sw = new java.io.StringWriter();
         ex.printStackTrace(new java.io.PrintWriter(sw));
         return sw.toString();
     }
+
+    public static String getClassName(Exception ex) {
+        StackTraceElement[] stackTrace = ex.getStackTrace();
+        if (stackTrace.length > 0) {
+            return stackTrace[0].getClassName();
+        }
+
+        return "UnknownClass";
+    }
+
+    public static String getMethodName(Exception ex) {
+        StackTraceElement[] stackTrace = ex.getStackTrace();
+        if (stackTrace.length > 0) {
+            return stackTrace[0].getMethodName();
+        }
+
+        return "UnknownMethod";
+    }
+    // #endregion
 
     public static String padLeft(String input, int length, char padChar) {
         if (input == null) {
