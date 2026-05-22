@@ -60,17 +60,40 @@ public class HyunHelper {
 
     // #region reflection
     public static void copyFields(Object source, Object target) throws IllegalAccessException {
-        Class<?> srcClass = source.getClass();
-        Class<?> tgtClass = target.getClass();
+        copyFields(source, target, Map.of());
+    }
+
+    /**
+     * 
+     * @param source
+     * @param target
+     * @param specialValueMap key: field name, value: field value.
+     *                        source와 다른 값을 target에 설정할 때 사용
+     * @throws IllegalAccessException
+     */
+    public static void copyFields(Object source, Object target, Map<String, Object> specialValueMap)
+            throws IllegalAccessException {
+        Class<?> sourceClass = source.getClass();
+        Class<?> targetClass = target.getClass();
 
         try {
-            for (Field srcField : srcClass.getDeclaredFields()) {
-                Field tgtField = tgtClass.getDeclaredField(srcField.getName());
-                if (tgtField.getType().equals(srcField.getType())) {
-                    srcField.setAccessible(true);
-                    tgtField.setAccessible(true);
-                    tgtField.set(target, srcField.get(source));
+            for (Field sourceField : sourceClass.getDeclaredFields()) {
+                Field targetField = targetClass.getDeclaredField(sourceField.getName());
+
+                if (specialValueMap.containsKey(targetField.getName())) {
+                    Object specialValue = specialValueMap.get(targetField.getName());
+                    if (targetField.getType().equals(specialValue.getClass())) {
+                        targetField.setAccessible(true);
+                        targetField.set(target, specialValue);
+                    }
+                } else {
+                    if (targetField.getType().equals(sourceField.getType())) {
+                        sourceField.setAccessible(true);
+                        targetField.setAccessible(true);
+                        targetField.set(target, sourceField.get(source));
+                    }
                 }
+
             }
         } catch (NoSuchFieldException ex) {
             logger.error("Field not found during copyFields: {}", ex.getMessage());
