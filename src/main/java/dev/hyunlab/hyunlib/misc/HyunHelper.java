@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.management.ManagementFactory;
 import java.lang.management.OperatingSystemMXBean;
+import java.lang.reflect.Field;
 import java.nio.file.FileStore;
 import java.nio.file.FileSystems;
 import java.nio.file.Files;
@@ -56,6 +57,27 @@ public class HyunHelper {
         }
         return (T) obj;
     }
+
+    // #region reflection
+    public static void copyFields(Object source, Object target) throws IllegalAccessException {
+        Class<?> srcClass = source.getClass();
+        Class<?> tgtClass = target.getClass();
+
+        try {
+            for (Field srcField : srcClass.getDeclaredFields()) {
+                Field tgtField = tgtClass.getDeclaredField(srcField.getName());
+                if (tgtField.getType().equals(srcField.getType())) {
+                    srcField.setAccessible(true);
+                    tgtField.setAccessible(true);
+                    tgtField.set(target, srcField.get(source));
+                }
+            }
+        } catch (NoSuchFieldException ex) {
+            logger.error("Field not found during copyFields: {}", ex.getMessage());
+        }
+    }
+
+    // #endregion
 
     // #region os/cpu/memory/disk info
     public static MemoryDto getOsMemoryInfo() {
