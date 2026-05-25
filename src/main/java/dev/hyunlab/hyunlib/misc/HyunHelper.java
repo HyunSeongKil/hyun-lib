@@ -248,6 +248,20 @@ public class HyunHelper {
         return sb.toString();
     }
 
+    public static String padRight(String input, int length, char padChar) {
+        if (input == null) {
+            input = "";
+        }
+        if (input.length() >= length) {
+            return input;
+        }
+        StringBuilder sb = new StringBuilder(input);
+        for (int i = 0; i < length - input.length(); i++) {
+            sb.append(padChar);
+        }
+        return sb.toString();
+    }
+
     // #region transform
     public static String markdownToHtmlString(String markdown) {
         Parser parser = new Parser.Builder().build();
