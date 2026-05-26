@@ -293,19 +293,24 @@ public class HyunHelper {
         // #region
         Supplier<Boolean> validate = () -> {
             if (dto.getSmtpDto() == null) {
+                logger.warn("SMTP 정보가 없습니다.");
                 return false;
             }
             if (isNullOrEmpty(dto.getSmtpDto().getHost()) || isNullOrEmpty(dto.getSmtpDto().getPort())) {
+                logger.warn("SMTP 호스트 또는 포트 정보가 없습니다.");
                 return false;
             }
             if (isNullOrEmpty(dto.getAuthentication().getEmailAddress())
                     || isNullOrEmpty(dto.getAuthentication().getPassword())) {
+                logger.warn("인증 정보가 없습니다.");
                 return false;
             }
             if (isNullOrEmpty(dto.getTos())) {
+                logger.warn("수신자 정보가 없습니다.");
                 return false;
             }
             if (isNullOrEmpty(dto.getSubject()) || isNullOrEmpty(dto.getContent())) {
+                logger.warn("제목 또는 본문 내용이 없습니다.");
                 return false;
             }
 
@@ -380,6 +385,7 @@ public class HyunHelper {
         // #endregion
 
         if (!validate.get()) {
+            logger.error("Invalid EmailV2Dto: {}", dto);
             throw new IllegalArgumentException("Invalid EmailDto");
         }
 
