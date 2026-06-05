@@ -4,6 +4,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.BeanUtils;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -26,17 +28,9 @@ public class HyunPaged<T> {
 
     private List<T> data;
 
-    private Map<String, Object> extra;
-
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        map.put("code", code);
-        map.put("message", message);
-        map.put("page", page);
-        map.put("size", size);
-        map.put("total", total);
-        map.put("data", data);
-        map.put("extra", extra);
+        BeanUtils.copyProperties(this, map);
 
         return map;
     }

@@ -1,7 +1,9 @@
 package dev.hyunlab.hyunlib.misc;
 
-import java.util.List;
+import java.util.HashMap;
 import java.util.Map;
+
+import org.springframework.beans.BeanUtils;
 
 import jakarta.annotation.Nullable;
 import lombok.AllArgsConstructor;
@@ -30,9 +32,6 @@ public class HyunResponse {
     @Nullable
     private Object data;
 
-    @Nullable
-    private Map<String, Object> extra;
-
     public static HyunResponse ok(Object obj) {
         return HyunResponse.builder()
                 .data(obj)
@@ -45,5 +44,12 @@ public class HyunResponse {
                 .message(msg)
                 .data(null)
                 .build();
+    }
+
+    public Map<String, Object> toMap() {
+        Map<String, Object> map = new HashMap<>();
+        BeanUtils.copyProperties(this, map);
+
+        return map;
     }
 }
