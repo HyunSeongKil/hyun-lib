@@ -594,6 +594,10 @@ public class HyunHelper {
         return System.getProperty("java.io.tmpdir");
     }
 
+    public static Path getJavaTempDirPath() {
+        return Paths.get( System.getProperty("java.io.tmpdir"));
+    }
+
     /**
      * 파일 또는 디렉토리를 zip으로 압축
      * 
