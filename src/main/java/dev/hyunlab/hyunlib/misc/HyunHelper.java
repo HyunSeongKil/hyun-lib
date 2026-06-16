@@ -597,13 +597,13 @@ public class HyunHelper {
     /**
      * 파일 또는 디렉토리를 zip으로 압축
      * 
-     * @param destPath     압축할 파일 또는 디렉토리 경로
-     * @param destFilePath 압축된 zip 파일이 생성될 경로 (파일명 포함)
+     * @param destPath    압축할 파일 또는 디렉토리 경로
+     * @param zipFilePath 압축된 zip 파일이 생성될 경로 (파일명 포함)
      * @return
      * @throws IOException
      */
-    public static boolean compressPathToZip(Path destPath, Path destFilePath) throws IOException {
-        try (ZipOutputStream zos = new ZipOutputStream(new java.io.FileOutputStream(destFilePath.toFile()))) {
+    public static boolean compressPathToZip(Path destPath, Path zipFilePath) throws IOException {
+        try (ZipOutputStream zos = new ZipOutputStream(new java.io.FileOutputStream(zipFilePath.toFile()))) {
             Files.walk(destPath)
                     .filter(path -> !Files.isDirectory(path))
                     .forEach(path -> {
@@ -618,6 +618,36 @@ public class HyunHelper {
                         }
                     });
 
+            return true;
+        } catch (IOException e) {
+            throw e;
+        }
+    }
+
+    /**
+     * 여러 파일 또는 디렉토리를 zip으로 압축
+     * 
+     * @param destPaths
+     * @param zipFilePath
+     * @return
+     * @throws IOException
+     */
+    public static boolean compressPathToZip(List<Path> destPaths, Path zipFilePath) throws IOException {
+        try (ZipOutputStream zos = new ZipOutputStream(new java.io.FileOutputStream(zipFilePath.toFile()))) {
+            for (Path destPath : destPaths) {
+                if (Files.isDirectory(destPath)) {
+                    throw new IllegalArgumentException("Directory compression is not supported. Path: " + destPath);
+                }
+
+                ZipEntry zipEntry = new ZipEntry(destPath.getFileName().toString());
+                try {
+                    zos.putNextEntry(zipEntry);
+                    Files.copy(destPath, zos);
+                    zos.closeEntry();
+                } catch (IOException e) {
+                    throw new RuntimeException("Error while compressing to zip", e);
+                }
+            }
             return true;
         } catch (IOException e) {
             throw e;
