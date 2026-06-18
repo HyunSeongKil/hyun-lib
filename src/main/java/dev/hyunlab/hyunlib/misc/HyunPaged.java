@@ -30,7 +30,12 @@ public class HyunPaged<T> {
 
     public Map<String, Object> toMap() {
         Map<String, Object> map = new HashMap<>();
-        BeanUtils.copyProperties(this, map);
+        map.put("code", getCode());
+        map.put("message", getMessage());
+        map.put("page", getPage());
+        map.put("size", getSize());
+        map.put("total", getTotal());
+        map.put("data", getData());
 
         return map;
     }
