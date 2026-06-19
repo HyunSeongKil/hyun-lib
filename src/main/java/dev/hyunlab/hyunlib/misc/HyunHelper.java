@@ -58,6 +58,12 @@ public class HyunHelper {
         return (T) obj;
     }
 
+    public static String createUuid(boolean withHyphen) {
+        return withHyphen
+                ? java.util.UUID.randomUUID().toString()
+                : java.util.UUID.randomUUID().toString().replaceAll("-", "");
+    }
+
     // #region reflection
     public static void copyFields(Object source, Object target) throws IllegalAccessException {
         copyFields(source, target, Map.of());
@@ -595,7 +601,7 @@ public class HyunHelper {
     }
 
     public static Path getJavaTempDirPath() {
-        return Paths.get( System.getProperty("java.io.tmpdir"));
+        return Paths.get(System.getProperty("java.io.tmpdir"));
     }
 
     /**
