@@ -17,6 +17,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Random;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.zip.ZipEntry;
@@ -62,6 +63,12 @@ public class HyunHelper {
         return withHyphen
                 ? java.util.UUID.randomUUID().toString()
                 : java.util.UUID.randomUUID().toString().replaceAll("-", "");
+    }
+
+    public static int getRandomBetween(int a, int b) {
+        Random rand = new Random();
+        // (b - a + 1) 범위 내에서 난수 생성 후 a를 더해줌
+        return rand.nextInt(b - a + 1) + a;
     }
 
     // #region reflection
