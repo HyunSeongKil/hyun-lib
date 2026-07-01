@@ -877,6 +877,7 @@ public class HyunHelper {
      */
     public static String aesEncode(String plainText, String key) {
         if (plainText == null || plainText.isEmpty()) {
+            logger.warn("AES encoding: plainText is null or empty, returning as is.");
             return plainText;
         }
 
@@ -892,7 +893,7 @@ public class HyunHelper {
             byte[] encrypted = cipher.doFinal(plainText.getBytes(java.nio.charset.StandardCharsets.UTF_8));
             return java.util.Base64.getEncoder().encodeToString(encrypted);
         } catch (Exception e) {
-            throw new RuntimeException("AES encoding error", e);
+            throw new RuntimeException("AES encoding error. plainText:" + plainText + ", key:" + key, e);
         }
     }
 
@@ -905,6 +906,7 @@ public class HyunHelper {
      */
     public static String aesDecode(String cipherText, String key) {
         if (cipherText == null || cipherText.isEmpty()) {
+            logger.warn("AES decoding: cipherText is null or empty, returning empty string.");
             return "";
         }
 
@@ -921,7 +923,7 @@ public class HyunHelper {
             byte[] decrypted = cipher.doFinal(decoded);
             return new String(decrypted, java.nio.charset.StandardCharsets.UTF_8);
         } catch (Exception e) {
-            throw new RuntimeException("AES decoding error", e);
+            throw new RuntimeException("AES decoding error. cipherText:" + cipherText + ", key:" + key, e);
         }
     }
 
