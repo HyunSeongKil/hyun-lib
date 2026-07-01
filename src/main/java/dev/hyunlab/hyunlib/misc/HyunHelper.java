@@ -301,7 +301,7 @@ public class HyunHelper {
      * @since 20260420
      * @throws IOException
      */
-    @SuppressWarnings("UseSpecificCatch")
+    @SuppressWarnings({ "UseSpecificCatch", "null" })
     public static boolean sendEmail(@NotNull EmailV2Dto dto) throws MessagingException, IOException {
         // #region
         Supplier<Boolean> validate = () -> {
@@ -427,7 +427,10 @@ public class HyunHelper {
             throw e;
         }
 
-        logger.info("<<");
+        logger.info("<< from: {}, to: {}, subject: {}",
+                dto.getFrom().getEmailAddress(),
+                dto.getTos().stream().map(EmailV2Dto.EmailUser::getEmailAddress).toList(),
+                dto.getSubject());
         return true;
     }
 
