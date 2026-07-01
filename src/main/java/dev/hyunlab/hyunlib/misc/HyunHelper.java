@@ -404,25 +404,30 @@ public class HyunHelper {
 
         // SMTP 서버 설정 (예: 회사 메일 서버)
         Properties props = smtpPropertiesSupplier.get();
+        logger.info("SMTP Properties: {}", props);
 
         // 인증 세션 생성
         Session session = sessionFunction.apply(props);
         session.setDebug(true);
+        logger.info("Email session created: {}", session);
 
         // 메일 메시지 작성
         MimeMessage message = messageFunction.apply(session);
         message.setSubject(dto.getSubject());
         // 메시지에 Multipart 설정
         message.setContent(multipartSupplier.get());
+        logger.info("Email message created: {}", message);
 
         try {
             // 메일 전송
             Transport.send(message);
         } catch (Exception e) {
+            logger.error("{}", e.getMessage());
             logger.error("{}", dto);
             throw e;
         }
 
+        logger.info("<<");
         return true;
     }
 
