@@ -51,6 +51,31 @@ import jakarta.validation.constraints.NotNull;
 public class HyunHelper {
     private static final Logger logger = LoggerFactory.getLogger(HyunHelper.class);
 
+    /**
+     * 리스트를 지정된 크기로 나누어 반환합니다.
+     * 
+     * @param <T>
+     * @param list
+     * @param chunkSize
+     * @return
+     */
+    public static <T> List<List<T>> split(List<T> list, int chunkSize) {
+        if (list == null || list.isEmpty() || chunkSize <= 0) {
+            throw new IllegalArgumentException("List must not be null or empty and chunkSize must be greater than 0");
+        }
+
+        int totalSize = list.size();
+        int numChunks = (int) Math.ceil((double) totalSize / chunkSize);
+        List<List<T>> chunks = new java.util.ArrayList<>(numChunks);
+
+        for (int i = 0; i < totalSize; i += chunkSize) {
+            int end = Math.min(totalSize, i + chunkSize);
+            chunks.add(list.subList(i, end));
+        }
+
+        return chunks;
+    }
+
     @SuppressWarnings("unchecked")
     public static <T> T defaultValue(Object obj, T defaultVal) {
         if (isNullOrEmpty(obj)) {
