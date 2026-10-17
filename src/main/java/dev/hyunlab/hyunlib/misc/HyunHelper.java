@@ -707,6 +707,10 @@ public class HyunHelper {
 
     // #region date/time
 
+    public static String getYmdhms(String pre) {
+        return pre + getCurrentYmd() + getCurrentHms();
+    }
+
     /**
      * 현재 날짜를 yyyyMMdd 형식으로 반환
      * 
