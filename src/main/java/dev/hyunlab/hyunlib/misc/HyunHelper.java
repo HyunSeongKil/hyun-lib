@@ -434,6 +434,7 @@ public class HyunHelper {
         // 인증 세션 생성
         Session session = sessionFunction.apply(props);
         session.setDebug(true);
+        session.setDebugOut(new Slf4jPrintStream());
         logger.info("Email session created: {}", session);
 
         // 메일 메시지 작성
@@ -508,6 +509,8 @@ public class HyunHelper {
                 return new PasswordAuthentication(dto.getFromEmailAddress(), dto.getFromEmailPassword());
             }
         });
+        session.setDebug(true);
+        session.setDebugOut(new Slf4jPrintStream());
 
         // 메일 메시지 작성
         MimeMessage message = new MimeMessage(session);
