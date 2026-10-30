@@ -55,7 +55,7 @@ public class HyunHelper {
     /**
      * 분자와 분모의 비율을 백분율로 계산합니다. 분모가 0이면 0을 반환합니다.
      *
-     * @param numerator 분자
+     * @param numerator   분자
      * @param denominator 분모
      * @return 백분율
      */
@@ -722,6 +722,10 @@ public class HyunHelper {
     // #endregion
 
     // #region date/time
+
+    public static String getYmdhms() {
+        return getCurrentYmd() + getCurrentHms();
+    }
 
     public static String getYmdhms(String pre) {
         return pre + getCurrentYmd() + getCurrentHms();
