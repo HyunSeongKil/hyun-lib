@@ -652,6 +652,44 @@ public class HyunHelper {
         return path.toFile().delete();
     }
 
+    public static int deletePaths(List<Path> paths) {
+        int deletedCount = 0;
+        for (Path path : paths) {
+            if (deletePath(path)) {
+                deletedCount++;
+            }
+        }
+        return deletedCount;
+    }
+
+    public static int deleteFiles(List<File> files) {
+        int deletedCount = 0;
+        for (File file : files) {
+            if (file == null) {
+                continue;
+            }
+
+            if (deletePath(file.toPath())) {
+                deletedCount++;
+            }
+        }
+        return deletedCount;
+    }
+
+    public static int deleteFiles(File[] files) {
+        int deletedCount = 0;
+        for (File file : files) {
+            if (file == null) {
+                continue;
+            }
+
+            if (deletePath(file.toPath())) {
+                deletedCount++;
+            }
+        }
+        return deletedCount;
+    }
+
     public static String getJavaTempDir() {
         return System.getProperty("java.io.tmpdir");
     }
